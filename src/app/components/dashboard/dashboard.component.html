@@ -22,7 +22,7 @@
 </div>
 <div class="card bg-blue-200">
     <p-dataView #dv [value]="listings" [showCurrentPageReport]="true" [paginator]="true" [rows]="4" filterBy="name"
-                [sortField]="sortField" [sortOrder]="sortOrder" layout="grid" [lazy]="true" (onLazyLoad)="loadListings($event)"
+                [sortField]="sortField" [sortOrder]="sortOrder" layout="list" [lazy]="true" (onLazyLoad)="loadListings($event)"
                  [totalRecords]="totalRecords"
                 [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
         <ng-template pTemplate="header">
@@ -36,7 +36,7 @@
         </ng-template>
         <ng-template let-listing pTemplate="listItem">
             <div class="col-12">
-                <div class="product-list-item bg-blue-800">
+                <div class="product-list-item">
                     <div class="product-list-detail">
                         <div class="product-name">{{listing.domain}}</div>
                         <div class="product-description">{{listing.owner}}</div>

@@ -132,14 +132,18 @@ export class ListDomainComponent implements OnInit, OnDestroy {
     console.log(`calc fees`);
     this.showBreakdown = true;
     let listingPrice   = this.domainSale.get('listingPrice').value;
+    console.log(listingPrice)
     if (listingPrice < 0) {
       this.domainSale.get('listingPrice').setValue(null);
       listingPrice = null;
     }
     if (!!listingPrice) {
+      console.log(!!listingPrice)
+      console.log(this.marketplaceConfig)
       this.marketplaceCommission = ConvertSufToFio(
         (parseFloat(this.marketplaceConfig.commission_fee) / 100) * ConvertAmtToSuf(listingPrice)
       );
+
 
       this.listingFee       = ConvertSufToFio(this.marketplaceConfig.listing_fee);
       this.receiveAmountFio = ConvertSufToFio(ConvertAmtToSuf(listingPrice) - ConvertAmtToSuf(ConvertFioToAmt(this.marketplaceCommission)));

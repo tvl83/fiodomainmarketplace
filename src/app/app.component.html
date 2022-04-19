@@ -20,7 +20,7 @@
                             <span>My Domains</span>
                         </a>
                     </li>
-                    <li>
+                    <li [routerLink]="['/my/listings']">
                         <a pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center text-bluegray-100 hover:text-bluegray-50 hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150">
                             <i class="pi pi-dollar mr-2"></i>
                             <span>My Listings</span>
@@ -35,13 +35,21 @@
                         </a>
                     </li>
                     <li class="border-top-1 border-bluegray-400 lg:border-top-none">
-                        <a *ngIf="isLoggedIn" pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150">
+                        <a *ngIf="isLoggedIn" pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150" pStyleClass="@next" enterClass="hidden" enterActiveClass="scalein" leaveToClass="hidden" leaveActiveClass="fadeout" [hideOnOutsideClick]="true">
                             <img src="{{ getGravatarURL('FIO7E6W9FgpAcg7VM8kak7sccSW5cdrTwFdwc7wi8mLgkEDwCmnda') }}" class="mr-3 lg:mr-0" style="width: 28px; height: 28px"/>
                             <div class="block ml-3">
                                 <div class="text-bluegray-50 font-medium">{{selectedAccount?.account_name}}</div>
                                 <span class="text-bluegray-100 font-medium text-sm">{{selectedAccount?.balance?.fio}}</span>
                             </div>
                         </a>
+                        <ul *ngIf="isLoggedIn" class="list-none px-6 p-3 lg:px-3 lg:py-2 border-round shadow-0 lg:border-1 border-50 lg:shadow-2 lg:absolute surface-overlay hidden origin-top lg:w-15rem cursor-pointer">
+                            <li class="bg-gray-600">
+                                <a (click)="walletService.login()" pRipple class="flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150">
+                                    <i class="pi pi-sign-out mr-2"></i>
+                                    <span class="font-medium">Logout</span>
+                                </a>
+                            </li>
+                        </ul>
                         <a *ngIf="!isLoggedIn" (click)="walletService.login()" pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150">Log In</a>
                     </li>
                 </ul>

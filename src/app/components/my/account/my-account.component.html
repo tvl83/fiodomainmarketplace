@@ -1,0 +1,125 @@
+<div class="layout-dashboard">
+    <div class="p-grid">
+        <div class="p-col-12">
+            <div class="p-grid" style="margin: -1rem;">
+                <div class="p-col">
+                    <div class="card overview-box white" *ngIf="selectedAccount">
+                        <div class="overview-info">
+                            <h3>Balance</h3>
+                            <h4>{{selectedAccount.balance.fio}}</h4>
+                        </div>
+                        <i class="pi pi-image"></i>
+                    </div>
+                </div>
+                <div class="p-col">
+                    <div class="card overview-box white" *ngIf="selectedAccount.domains; else elseDomains">
+                        <div class="overview-info">
+                            <h3>Domains</h3>
+                            <h4>{{selectedAccount.domains.length}}</h4>
+                        </div>
+                        <i class="pi pi-image"></i>
+                    </div>
+                    <ng-template #elseDomains>
+                        <div class="card overview-box white">
+                            <div class="overview-info">
+                                <h3>Domains</h3>
+                                <h4>{{selectedAccount.domains.length}}</h4>
+                            </div>
+                            <i class="pi pi-image"></i>
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="p-col">
+                    <div class="card overview-box white" *ngIf="selectedAccount.addresses; else elseAddresses">
+                        <div class="overview-info">
+                            <h3>Addresses</h3>
+                            <h4>{{selectedAccount.addresses.length || 0}}</h4>
+                        </div>
+                        <i class="pi pi-image"></i>
+                    </div>
+                    <ng-template #elseAddresses>
+                        <div class="card overview-box white">
+                            <div class="overview-info">
+                                <h3>Addresses</h3>
+                                <h4>0</h4>
+                            </div>
+                            <i class="pi pi-image"></i>
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="p-col" [routerLink]="'/my/listings'">
+                    <div class="card overview-box white" *ngIf="selectedAccount.listings; else elseListings">
+                        <div class="overview-info">
+                            <h3>Listings</h3>
+                            <h4>{{selectedAccount.listings.length || 0}}</h4>
+                        </div>
+                        <i class="pi pi-image"></i>
+                    </div>
+                    <ng-template #elseListings>
+                        <div class="card overview-box white">
+                            <div class="overview-info">
+                                <h3>Listings</h3>
+                                <h4>{{selectedAccount.listings.length || 0}}</h4>
+                            </div>
+                            <i class="pi pi-image"></i>
+                        </div>
+                    </ng-template>
+                </div>
+                <!--                        <div class="p-col">-->
+                <!--                            <div class="card overview-box blue">-->
+                <!--                                <div class="overview-info">-->
+                <!--                                    <h6>New users (Today)</h6>-->
+                <!--                                    <h1>32</h1>-->
+                <!--                                </div>-->
+                <!--                                <i class="pi pi-users"></i>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                        <div class="p-col">-->
+                <!--                            <div class="card overview-box gray">-->
+                <!--                                <div class="overview-info">-->
+                <!--                                    <h6>Uptime</h6>-->
+                <!--                                    <h1>5h12m</h1>-->
+                <!--                                </div>-->
+                <!--                                <i class="pi pi-globe"></i>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                        <div class="p-col">-->
+                <!--                            <div class="card overview-box darkgray">-->
+                <!--                                <div class="overview-info">-->
+                <!--                                    <h6>Text coverage</h6>-->
+                <!--                                    <h1>96%</h1>-->
+                <!--                                </div>-->
+                <!--                                <i class="pi pi-th-large"></i>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+                <!--                        <div class="p-col">-->
+                <!--                            <div class="card overview-box orange">-->
+                <!--                                <div class="overview-info">-->
+                <!--                                    <h6>Cloud users</h6>-->
+                <!--                                    <h1>4216</h1>-->
+                <!--                                </div>-->
+                <!--                                <i class="pi pi-cloud"></i>-->
+                <!--                            </div>-->
+                <!--                        </div>-->
+            </div>
+        </div>
+
+        <div class="p-col-12 p-md-12 p-xl-12">
+            <div class="p-grid">
+                <div class="p-col-12">
+                    <div class="card chart" *ngIf="selectedAccount !== null">
+                        <div class="card-header">
+                            <div class="card-title">
+                                Domains for Sale
+                            </div>
+                        </div>
+
+                        Hello! {{selectedAccount.nickname}} ({{selectedAccount.account_name}})!! Your balance
+                        is {{selectedAccount.balance.fio}}.
+                        <p> There can be a list of recent transactions here.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

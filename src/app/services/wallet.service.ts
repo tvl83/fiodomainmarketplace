@@ -134,13 +134,25 @@ export class WalletService {
 
 			this.selectedAccount$.next(this.selectedAccount);
 
-			// this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
+			this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
 			// await this.updateDomains();
 			await this.updateBalance();
 			// await this.updateListings();
 		}
 		this.isLoggedIn = value;
 		this.isLoggedIn$.next(value);
+	}
+
+	private async getMarketplaceConfig() {
+		const results: any = await this.api.rpc
+		                               .get_table_rows({
+			                               table: EscrowTables.MarketplaceConfigTable,
+			                               scope: Contracts.FioEscrow,
+			                               code : Contracts.FioEscrow,
+			                               json : true,
+			                               limit: 1
+		                               });
+		this.marketplaceConfig$.next(results.rows[0]);
 	}
 
 	async restoreSession() {
@@ -341,10 +353,49 @@ export class WalletService {
 				fio_domain: payload.data.fio_domain,
 				sale_price: payload.data.sale_price,
 				max_fee   : payload.data.max_fee,
-				tpid      : TPID.account
+				tpid      : ""
 			}
 		};
 		// @ts-ignore
+		return await this.session.transact({action});
+	}
+
+	public async updateListings() {
+		const results: any = await this.api.rpc
+		                               .get_table_rows({
+			                               table         : EscrowTables.DomainSalesTable,
+			                               scope         : Contracts.FioEscrow,
+			                               code          : Contracts.FioEscrow,
+			                               json          : true,
+			                               index_position: 1,
+			                               limit         : 100
+		                               })
+		                               .catch(err => {
+			                               console.error(err);
+		                               });
+
+		this.selectedAccount.listings = [];
+		results.rows.forEach((row: any) => {
+			if (row.owner === this.selectedAccount.account_name) {
+				this.selectedAccount.listings.push(row);
+			}
+		});
+		this.selectedAccount$.next(this.selectedAccount);
+	}
+
+	async cancelListing(account: AccountInfo, payload: CancelListingPayload) {
+		const action: CancelListingPayload = {
+			account      : Contracts.FioEscrow,
+			name         : EscrowActions.CancelDomainSale,
+			authorization: [this.session.auth],
+			data         : {
+				actor     : this.session.auth.actor,
+				fio_domain: payload.data.fio_domain,
+				max_fee   : payload.data.max_fee,
+				tpid      : TPID.account
+			}
+		};
+
 		return await this.session.transact({action});
 	}
 }
