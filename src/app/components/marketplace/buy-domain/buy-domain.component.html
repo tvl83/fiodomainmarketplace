@@ -1,0 +1,14 @@
+<div class="p-grid align-content-center">
+    <div class="p-col-12 align-content-center" *ngIf="listing">
+        <h2>Buying @{{listing.domain}}</h2>
+        <b>Seller</b>: {{listing.owner}} <br />
+        <b>Date Listed</b>: {{listing.date_listed | date: 'short'}} <br />
+        <b>Buy Price</b>: {{listing.sale_price_fio}} <br />
+        <div class="p-field p-col" *ngIf="listing.status === 1">
+            <button pButton type="button" label="Buy" (click)="buyDomain()"></button>
+        </div>
+        <div class="p-field p-col" *ngIf="listing.status === 2 || listing.status === 3">
+            This listing has already been sold or cancelled.
+        </div>
+    </div>
+</div>

@@ -1,0 +1,30 @@
+<h2>Create Listing</h2>
+<div class="p-fluid p-formgrid p-grid">
+
+    <form [formGroup]="domainSale">
+        <div class="p-field p-col">
+            <label for="domainName">Domain Name</label>
+            <input formControlName="domainName" id="domainName" type="text" pInputText>
+        </div>
+        <div class="p-field p-col">
+            <label for="listingPrice">Listing Price (FIO)</label>
+            <input formControlName="listingPrice" id="listingPrice" type="number" min="0" (keyup)="calcFees()" pInputText>
+        </div>
+        <div class="p-col" *ngIf="showBreakdown">
+            <div class="p-grid">
+                <div class="p-col-12">
+                    Listing Fee: <strong>{{listingFee}}</strong> ( Flat rate. Non-Refundable. Paid right away, when listed )
+                </div>
+                <div class="p-col-12">
+                    Marketplace Commission ( {{ marketplaceConfig.commission_fee | number: '2.0-2' }}% ): <strong>{{marketplaceCommission}}</strong> ( Paid on sale )
+                </div>
+                <div class="p-col-12">
+                    You will receive <strong>{{receiveAmountFio}}</strong> ( ~{{receiveAmount * fioUsdValue | currency}} ) when the domain is sold.
+                </div>
+            </div>
+        </div>
+        <div class="p-field p-col">
+            <button pButton type="button" label="Confirm" [disabled]="!domainSale.valid" (click)="listDomain()"></button>
+        </div>
+    </form>
+</div>
