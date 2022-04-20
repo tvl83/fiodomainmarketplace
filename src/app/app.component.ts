@@ -54,4 +54,11 @@ export class AppComponent {
 		const hash = md5.appendStr(String(email).trim().toLowerCase()).end();
 		return `https://www.gravatar.com/avatar/${hash}?d=retro`;
 	}
+
+	async login(){
+		await this.walletService.login();
+	}
+	async logout(){
+		await this.walletService.logout();
+	}
 }

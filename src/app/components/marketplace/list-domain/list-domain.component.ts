@@ -7,7 +7,7 @@ import {
     ConvertSufToFio,
     CreateListingPayload,
     EscrowActions,
-    MarketplaceConfig, TPID
+    MarketplaceConfig
 } from 'src/app/utilities/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {WalletService} from '../../../services/wallet.service';

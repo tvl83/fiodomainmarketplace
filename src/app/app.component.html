@@ -43,14 +43,14 @@
                             </div>
                         </a>
                         <ul *ngIf="isLoggedIn" class="list-none px-6 p-3 lg:px-3 lg:py-2 border-round shadow-0 lg:border-1 border-50 lg:shadow-2 lg:absolute surface-overlay hidden origin-top lg:w-15rem cursor-pointer">
-                            <li class="bg-gray-600">
-                                <a (click)="walletService.login()" pRipple class="flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150">
+                            <li>
+                                <a (click)="logout()" pRipple class="flex p-3 align-items-center text-600 hover:text-900 hover:surface-100 transition-colors transition-duration-150">
                                     <i class="pi pi-sign-out mr-2"></i>
                                     <span class="font-medium">Logout</span>
                                 </a>
                             </li>
                         </ul>
-                        <a *ngIf="!isLoggedIn" (click)="walletService.login()" pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150">Log In</a>
+                        <a *ngIf="!isLoggedIn" (click)="login()" pRipple class="flex px-6 p-3 lg:px-3 lg:py-2 align-items-center hover:bg-bluegray-600 font-medium border-round cursor-pointer transition-colors transition-duration-150">Log In</a>
                     </li>
                 </ul>
             </div>
@@ -64,7 +64,7 @@
         </ul>
     </div>
     <div class="p-5 flex flex-column flex-auto" style="margin-top: -8rem">
-        <div class="border-2 border-dashed surface-border border-round surface-section flex-auto">
+        <div class="border-2 surface-border border-round surface-section flex-auto">
             <router-outlet></router-outlet>
         </div>
     </div>

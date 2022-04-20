@@ -114,6 +114,23 @@ export class WalletService {
 		await this.setLoggedIn(true);
 	}
 
+	async logout(): Promise<any> {
+		console.log(this.session.chainId);
+		await this.session.remove();
+		this.selectedAccount = {
+			domains     : [],
+			account_name: '',
+			api         : undefined,
+			balance     : {amt: 0, fio: '', sufs: 0},
+			listings    : [],
+			nickname    : '',
+			publicKey   : '',
+			addresses   : []
+		};
+		this.selectedAccount$.next(this.selectedAccount);
+		await this.setLoggedIn(false);
+	}
+
 	public async setLoggedIn(value: boolean): Promise<void> {
 		if (value) {
 			this.accountName                  = this.session.auth.toString().split('@')[0];
@@ -135,9 +152,9 @@ export class WalletService {
 			this.selectedAccount$.next(this.selectedAccount);
 
 			this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
-			// await this.updateDomains();
+			await this.updateDomains();
 			await this.updateBalance();
-			// await this.updateListings();
+			await this.updateListings();
 		}
 		this.isLoggedIn = value;
 		this.isLoggedIn$.next(value);
@@ -336,7 +353,7 @@ export class WalletService {
 				fio_domain   : payload.data.fio_domain,
 				max_buy_price: payload.data.max_buy_price,
 				max_fee      : payload.data.max_fee,
-				tpid         : TPID.account
+				tpid         : ""
 			}
 		};
 
@@ -392,7 +409,7 @@ export class WalletService {
 				actor     : this.session.auth.actor,
 				fio_domain: payload.data.fio_domain,
 				max_fee   : payload.data.max_fee,
-				tpid      : TPID.account
+				tpid      : ""
 			}
 		};
 
