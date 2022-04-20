@@ -1,26 +1,26 @@
-<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
-    <div class="grid">
-        <div class="col-12 md:col-6 lg:col-6 p-6">
-            <div class="p-3 text-center bg-blue-500" style="border-radius: 12px">
-                <span class="inline-flex justify-content-center align-items-center bg-blue-600 border-circle mb-3" style="width:49px; height: 49px">
-                    <i class="pi pi-inbox text-xl text-white"></i>
-                </span>
-                <div class="text-2xl font-medium text-white mb-2"> {{counts.listings}} </div>
-                <span class="text-blue-100 font-medium">Domains Listed</span>
-            </div>
-        </div>
-        <div class="col-12 md:col-6 lg:col-6 p-6">
-            <div class="p-3 text-center bg-cyan-500" style="border-radius: 12px">
-                <span class="inline-flex justify-content-center align-items-center bg-cyan-600 border-circle mb-3" style="width:49px; height: 49px">
-                    <i class="pi pi-dollar text-xl text-white"></i>
-                </span>
-                <div class="text-2xl font-medium text-white mb-2"> {{counts.sold}} </div>
-                <span class="text-purple-100 font-medium">Domains Sold</span>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="card bg-blue-200">
+<!--<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">-->
+<!--    <div class="grid">-->
+<!--        <div class="col-12 md:col-6 lg:col-6 p-6">-->
+<!--            <div class="p-3 text-center bg-blue-500" style="border-radius: 12px">-->
+<!--                <span class="inline-flex justify-content-center align-items-center bg-blue-600 border-circle mb-3" style="width:49px; height: 49px">-->
+<!--                    <i class="pi pi-inbox text-xl text-white"></i>-->
+<!--                </span>-->
+<!--                <div class="text-2xl font-medium text-white mb-2"> {{counts.listings}} </div>-->
+<!--                <span class="text-blue-100 font-medium">Domains Listed</span>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <div class="col-12 md:col-6 lg:col-6 p-6">-->
+<!--            <div class="p-3 text-center bg-cyan-500" style="border-radius: 12px">-->
+<!--                <span class="inline-flex justify-content-center align-items-center bg-cyan-600 border-circle mb-3" style="width:49px; height: 49px">-->
+<!--                    <i class="pi pi-dollar text-xl text-white"></i>-->
+<!--                </span>-->
+<!--                <div class="text-2xl font-medium text-white mb-2"> {{counts.sold}} </div>-->
+<!--                <span class="text-purple-100 font-medium">Domains Sold</span>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<div *ngIf="!eBreakSet" class="card bg-blue-200">
     <p-dataView #dv [value]="listings" [showCurrentPageReport]="true" [paginator]="true" [rows]="4" filterBy="name"
                 [sortField]="sortField" [sortOrder]="sortOrder" layout="grid" [lazy]="true" (onLazyLoad)="loadListings($event)"
                  [totalRecords]="totalRecords"
@@ -65,4 +65,8 @@
             </div>
         </ng-template>
     </p-dataView>
+</div>
+
+<div *ngIf="eBreakSet">
+    <h2>Coming soon!</h2>
 </div>

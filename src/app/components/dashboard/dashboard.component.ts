@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 	sortKey: string           = "";
 	sortOrder: number         = 0;
 	sortField: string         = "";
+	eBreakSet: boolean        = false;
 
 	constructor(private walletService: WalletService, private http: HttpClient) {
 	}
@@ -74,7 +75,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
 			this.walletService.selectedAccount$
 			    .subscribe((next) => {
 				    this.selectedAccount = next;
-			    })
+			    }),
+			await this.walletService.eBreakSet$
+			          .subscribe((next) => {
+				          this.eBreakSet = next;
+			          })
 		);
 	}
 
@@ -89,13 +94,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 	public async loadListings(event: any) {
 		this.loading = true;
 		this.rows    = event.rows;
-		let page   = (event.first / event.rows);
+		let page     = (event.first / event.rows);
 		const filter = event.globalFilter;
 		await this.getNextPage(page, event.sortField, event.sortOrder, filter);
 	}
 
 
-	public onPageChange(event:any){
+	public onPageChange(event: any) {
 		console.log(`PAGE CHANGE`);
 		console.log(event);
 	}

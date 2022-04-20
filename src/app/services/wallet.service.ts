@@ -96,8 +96,16 @@ export class WalletService {
 		addresses   : []
 	};
 
-	constructor(private http: HttpClient) {
+	public eBreakSet$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+	private eBreakSet: boolean = false;
 
+	constructor(private http: HttpClient) {
+		this.setEbreak(true);
+	}
+
+	public setEbreak(eBreak){
+		this.eBreakSet$.next(eBreak);
+		this.eBreakSet = eBreak;
 	}
 
 	public async getFioUSDValue() {
@@ -112,6 +120,23 @@ export class WalletService {
 		const {session} = identity;
 		this.session    = session;
 		await this.setLoggedIn(true);
+	}
+
+	async logout(): Promise<any> {
+		console.log(this.session.chainId);
+		await this.session.remove();
+		this.selectedAccount = {
+			domains     : [],
+			account_name: '',
+			api         : undefined,
+			balance     : {amt: 0, fio: '', sufs: 0},
+			listings    : [],
+			nickname    : '',
+			publicKey   : '',
+			addresses   : []
+		};
+		this.selectedAccount$.next(this.selectedAccount);
+		await this.setLoggedIn(false);
 	}
 
 	public async setLoggedIn(value: boolean): Promise<void> {
@@ -134,13 +159,25 @@ export class WalletService {
 
 			this.selectedAccount$.next(this.selectedAccount);
 
-			// this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
-			// await this.updateDomains();
+			this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
+			await this.updateDomains();
 			await this.updateBalance();
-			// await this.updateListings();
+			await this.updateListings();
 		}
 		this.isLoggedIn = value;
 		this.isLoggedIn$.next(value);
+	}
+
+	private async getMarketplaceConfig() {
+		const results: any = await this.api.rpc
+		                               .get_table_rows({
+			                               table: EscrowTables.MarketplaceConfigTable,
+			                               scope: Contracts.FioEscrow,
+			                               code : Contracts.FioEscrow,
+			                               json : true,
+			                               limit: 1
+		                               });
+		this.marketplaceConfig$.next(results.rows[0]);
 	}
 
 	async restoreSession() {
@@ -324,7 +361,7 @@ export class WalletService {
 				fio_domain   : payload.data.fio_domain,
 				max_buy_price: payload.data.max_buy_price,
 				max_fee      : payload.data.max_fee,
-				tpid         : TPID.account
+				tpid         : ""
 			}
 		};
 
@@ -341,10 +378,49 @@ export class WalletService {
 				fio_domain: payload.data.fio_domain,
 				sale_price: payload.data.sale_price,
 				max_fee   : payload.data.max_fee,
-				tpid      : TPID.account
+				tpid      : ""
 			}
 		};
 		// @ts-ignore
+		return await this.session.transact({action});
+	}
+
+	public async updateListings() {
+		const results: any = await this.api.rpc
+		                               .get_table_rows({
+			                               table         : EscrowTables.DomainSalesTable,
+			                               scope         : Contracts.FioEscrow,
+			                               code          : Contracts.FioEscrow,
+			                               json          : true,
+			                               index_position: 1,
+			                               limit         : 100
+		                               })
+		                               .catch(err => {
+			                               console.error(err);
+		                               });
+
+		this.selectedAccount.listings = [];
+		results.rows.forEach((row: any) => {
+			if (row.owner === this.selectedAccount.account_name) {
+				this.selectedAccount.listings.push(row);
+			}
+		});
+		this.selectedAccount$.next(this.selectedAccount);
+	}
+
+	async cancelListing(account: AccountInfo, payload: CancelListingPayload) {
+		const action: CancelListingPayload = {
+			account      : Contracts.FioEscrow,
+			name         : EscrowActions.CancelDomainSale,
+			authorization: [this.session.auth],
+			data         : {
+				actor     : this.session.auth.actor,
+				fio_domain: payload.data.fio_domain,
+				max_fee   : payload.data.max_fee,
+				tpid      : ""
+			}
+		};
+
 		return await this.session.transact({action});
 	}
 }
