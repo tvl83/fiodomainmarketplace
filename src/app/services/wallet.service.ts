@@ -353,7 +353,7 @@ export class WalletService {
 				fio_domain   : payload.data.fio_domain,
 				max_buy_price: payload.data.max_buy_price,
 				max_fee      : payload.data.max_fee,
-				tpid         : ""
+				tpid         : TPID.account
 			}
 		};
 
@@ -370,7 +370,7 @@ export class WalletService {
 				fio_domain: payload.data.fio_domain,
 				sale_price: payload.data.sale_price,
 				max_fee   : payload.data.max_fee,
-				tpid      : ""
+				tpid      : TPID.account
 			}
 		};
 		// @ts-ignore
@@ -409,7 +409,7 @@ export class WalletService {
 				actor     : this.session.auth.actor,
 				fio_domain: payload.data.fio_domain,
 				max_fee   : payload.data.max_fee,
-				tpid      : ""
+				tpid      : TPID.account
 			}
 		};
 

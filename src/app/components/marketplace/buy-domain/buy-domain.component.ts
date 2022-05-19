@@ -102,7 +102,7 @@ export class BuyDomainComponent implements OnInit, OnDestroy {
                     max_buy_price: this.listing.sale_price,
                     max_fee      : ConvertAmtToSuf(5),
                     sale_id      : this.listing.id,
-                    tpid         : ""
+                    tpid         : TPID.account
                 },
                 name         : ''
             };

@@ -21,9 +21,9 @@
 <!--    </div>-->
 <!--</div>-->
 <div class="card bg-blue-200">
-    <p-dataView #dv [value]="listings" [showCurrentPageReport]="true" [paginator]="true" [rows]="4" filterBy="name"
+    <p-dataView #dv [value]="listings" [showCurrentPageReport]="true" [paginator]="true" [rows]="10" filterBy="name"
                 [sortField]="sortField" [sortOrder]="sortOrder" layout="list" [lazy]="true" (onLazyLoad)="loadListings($event)"
-                 [totalRecords]="totalRecords"
+                 [totalRecords]="totalRecords" [rowsPerPageOptions]="[5, 10, 25, 100]"
                 [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
         <ng-template pTemplate="header">
             <div class="flex flex-column md:flex-row md:justify-content-between">

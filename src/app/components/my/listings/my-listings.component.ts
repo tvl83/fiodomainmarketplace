@@ -9,7 +9,7 @@ import {
     Contracts, ConvertAmtToSuf,
     ConvertSufToFio,
     EscrowActions,
-    Listing
+    Listing, TPID
 } from "../../../utilities/constants";
 
 @Component({
@@ -97,7 +97,7 @@ export class MyListingsComponent implements OnInit, OnDestroy {
                 actor     : '',
                 fio_domain: domain.domain,
                 max_fee   : ConvertAmtToSuf(5),
-                tpid      : ''
+                tpid      : TPID.account
             }
         };
 
