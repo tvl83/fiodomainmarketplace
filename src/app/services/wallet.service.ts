@@ -25,7 +25,7 @@ let walletHost = environment.walletHost;
 let apiUrl = environment.apiUrl;
 
 const endpoint = `https://${walletHost}/`;
-const apiEndpoint = `https://${apiUrl}/`
+const apiEndpoint = `https://${apiUrl}`
 
 const rpc               = new JsonRpc(endpoint);
 const chainId           = 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e';
