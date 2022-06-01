@@ -21,15 +21,9 @@ import {JsSignatureProvider} from 'eosjs/dist/eosjs-jssig';
 
 import {environment} from '../../environments/environment';
 
-let walletHost = '';
-let apiUrl = '';
-if (environment.production) {
-	walletHost = `fio-mainnet.eosblocksmith.io`;
-	apiUrl = 'api-mainnet.fiomarketplace.com'
-} else {
-	walletHost = `fio-testnet.eosblocksmith.io`;
-	apiUrl = 'api-testnet.fiomarketplace.com'
-}
+let walletHost = environment.walletHost;
+let apiUrl = environment.apiUrl;
+
 const endpoint = `https://${walletHost}/`;
 const apiEndpoint = `https://${apiUrl}/`
 
