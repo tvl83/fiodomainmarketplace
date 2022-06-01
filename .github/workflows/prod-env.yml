@@ -44,7 +44,7 @@ jobs:
           npm ci
 
       - name: Build angular
-        run: npm run build --configuration=production
+        run: npm run build --prod
 
       - name: Delete previous build
         uses: D3rHase/ssh-command-action@v0.2
