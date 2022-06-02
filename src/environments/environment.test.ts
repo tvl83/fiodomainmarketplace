@@ -5,7 +5,8 @@
 export const environment = {
 	production: false,
 	walletHost: 'fio-testnet.eosblocksmith.io',
-	apiUrl    : 'api-testnet.fiomarketplace.com'
+	apiUrl    : 'api-testnet.fiomarketplace.com',
+	tpidAddress: 'fiomarketplace@fiotestnet'
 };
 
 /*

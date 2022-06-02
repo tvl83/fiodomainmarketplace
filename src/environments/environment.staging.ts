@@ -3,9 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-	production: true,
-	walletHost: 'fio-mainnet.eosblocksmith.io',
-	apiUrl    : 'api-staging.fiomarketplace.com'
+	production : true,
+	walletHost : 'fio-mainnet.eosblocksmith.io',
+	apiUrl     : 'api-staging.fiomarketplace.com',
+	tpidAddress: 'tpid@eosblocksmith'
 };
 
 /*
