@@ -3,10 +3,11 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-	production: false,
-	walletHost: 'fio-testnet.eosblocksmith.io',
-	apiUrl    : 'api-testnet.fiomarketplace.com',
-	tpidAddress: 'fiomarketplace@fiotestnet'
+	production : false,
+	walletHost : 'fio-testnet.eosblocksmith.io',
+	apiUrl     : 'api-testnet.fiomarketplace.com',
+	tpidAddress: 'fiomarketplace@fiotestnet',
+	chainId    : 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e'
 };
 
 /*
