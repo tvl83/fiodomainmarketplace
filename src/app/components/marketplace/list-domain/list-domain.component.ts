@@ -38,6 +38,7 @@ export class ListDomainComponent implements OnInit, OnDestroy {
   public fioUsdValue: number = 0;
   public selectedAccount: AccountInfo = {};
   public showBreakdown: boolean = false;
+  public showError: boolean = false;
 
   constructor(private fb: FormBuilder,
               private walletService: WalletService,
@@ -130,6 +131,7 @@ export class ListDomainComponent implements OnInit, OnDestroy {
 
   calcFees() {
     console.log(`calc fees`);
+    this.showError = false;
     this.showBreakdown = true;
     let listingPrice   = this.domainSale.get('listingPrice').value;
     console.log(listingPrice)
@@ -144,10 +146,13 @@ export class ListDomainComponent implements OnInit, OnDestroy {
         (parseFloat(this.marketplaceConfig.commission_fee) / 100) * ConvertAmtToSuf(listingPrice)
       );
 
-
       this.listingFee       = ConvertSufToFio(this.marketplaceConfig.listing_fee);
       this.receiveAmountFio = ConvertSufToFio(ConvertAmtToSuf(listingPrice) - ConvertAmtToSuf(ConvertFioToAmt(this.marketplaceCommission)));
       this.receiveAmount    = (ConvertFioToAmt(this.receiveAmountFio));
+    }
+    if(listingPrice > 999999){
+      this.showBreakdown = false;
+      this.showError = true;
     }
   }
 }
