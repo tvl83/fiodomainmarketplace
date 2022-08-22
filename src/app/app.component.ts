@@ -30,20 +30,14 @@ export class AppComponent {
 		this.subscriptions.push(
 			await this.walletService.accounts$
 			          .subscribe((next) => {
-				          console.log(`account$`)
-				          console.log(next)
 				          this.accounts = next;
 			          }),
 			await this.walletService.selectedAccount$
 			          .subscribe((next) => {
-				          console.log(`selectedAccount$`)
-				          console.log(next)
 				          this.selectedAccount = next;
 			          }),
 			await this.walletService.isLoggedIn$
 			          .subscribe((next) => {
-									console.log(`isLoggedIn$`)
-									console.log(next)
 				          this.isLoggedIn = next;
 			          })
 		);

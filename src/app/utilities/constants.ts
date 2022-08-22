@@ -101,6 +101,7 @@ export interface CancelListingPayload {
     authorization: PermissionLevel[];
     data: {
         actor: {};
+        sale_id: number;
         fio_domain: string;
         max_fee: number;
         tpid: string;
