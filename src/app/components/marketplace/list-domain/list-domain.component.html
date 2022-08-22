@@ -8,7 +8,7 @@
         </div>
         <div class="p-field p-col">
             <label for="listingPrice">Listing Price (FIO)</label>
-            <input formControlName="listingPrice" id="listingPrice" type="number" min="0" (keyup)="calcFees()" pInputText>
+            <input formControlName="listingPrice" id="listingPrice" type="number" min="0" max="999999" (change)="calcFees()" (keyup)="calcFees()" pInputText>
         </div>
         <div class="p-col" *ngIf="showBreakdown">
             <div class="p-grid">
