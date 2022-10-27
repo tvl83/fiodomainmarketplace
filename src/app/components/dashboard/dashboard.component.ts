@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Subscription} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-import {AccountInfo, ConvertSufToFio, Listing} from 'src/app/utilities/constants';
+import {AccountInfo, ConvertSufToFio, Listing, stringToHash} from 'src/app/utilities/constants';
 import {WalletService} from "../../services/wallet.service";
 
 interface Product {
@@ -67,6 +67,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 		this.counts   = await this.walletService.countListings();
 		this.products = [];
 
+		await this.search("blah")
+
 		this.sortOptions = [
 			{label: 'Price High to Low', value: '!price'},
 			{label: 'Price Low to High', value: 'price'}
@@ -97,8 +99,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 		let page     = (event.first / event.rows);
 		const filter = event.globalFilter;
 		await this.getNextPage(page, event.sortField, event.sortOrder, filter);
+		this.loading      = false;
 	}
-
 
 	public onPageChange(event: any) {
 		console.log(`PAGE CHANGE`);
@@ -110,6 +112,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
 		// this.currentPage += page;
 		this.listings = [];
 		this.results  = await this.walletService.getActiveListingsByPage(page, this.rows, sortField, sortOrder, filter);
+
+		console.log(this.results);
 
 		this.results.rows.forEach((listing: Listing) => {
 			this.listings.push({
@@ -126,6 +130,21 @@ export class DashboardComponent implements OnInit, OnDestroy {
 		this.disableNext  = !this.results.more;
 		this.disablePrev  = this.currentPage === 0;
 		this.totalRecords = this.results.totalRecords;
-		this.loading      = false;
+	}
+
+	async search(term: string) {
+		const hashedTerm = stringToHash(term);
+		const result     = await this.selectedAccount.api
+		                             .rpc
+		                             .get_table_rows({
+			                             table         : 'domainsales',
+			                             code          : 'fio.escrow',
+			                             scope         : 'fio.escrow',
+			                             index_position: 2,
+			                             key_type      : 'i128',
+			                             lower_bound   : hashedTerm,
+			                             upper_bound   : hashedTerm
+		                             });
+		return result.rows[0];
 	}
 }

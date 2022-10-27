@@ -7,10 +7,18 @@
                          [paginator]="true" [rows]="20">
                     <ng-template pTemplate="header">
                         <tr>
-                            <th pSortableColumn="domain">Domain Name<p-sortIcon field="domain"></p-sortIcon></th>
-                            <th pSortableColumn="sale_price_fio">Price<p-sortIcon field="sale_price_fio"></p-sortIcon></th>
-                            <th pSortableColumn="commission_fee_pct">Commission<p-sortIcon field="commission_fee_pct"></p-sortIcon></th>
-                            <th pSortableColumn="date_updated">Date Last Updated<p-sortIcon field="date_updated"></p-sortIcon></th>
+                            <th pSortableColumn="domain">Domain Name
+                                <p-sortIcon field="domain"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="sale_price_fio">Price
+                                <p-sortIcon field="sale_price_fio"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="commission_fee_pct">Commission
+                                <p-sortIcon field="commission_fee_pct"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="date_updated">Date Last Updated
+                                <p-sortIcon field="date_updated"></p-sortIcon>
+                            </th>
                             <th>Actions</th>
                         </tr>
                     </ng-template>
@@ -22,56 +30,72 @@
                             <td>{{domain.date_updated * 1000 | date: "short"}}</td>
                             <td>
                                 <button pButton type="button" label="Cancel Listing"
-                                        (click)="cancelListing(domain)"></button>
+                                        (click)="cancelListing(domain, domain.id)"></button>
                             </td>
                         </tr>
                     </ng-template>
                 </p-table>
             </p-tabPanel>
-            <p-tabPanel header="Sold Listings">
-                <p-table #table [value]="soldListings" [showCurrentPageReport]="true"
-                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                         [paginator]="true" [rows]="20" styleClass="p-datatable-responsive-demo">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th pSortableColumn="domain">Domain Name<p-sortIcon field="domain"></p-sortIcon></th>
-                            <th pSortableColumn="sale_price_fio">Price<p-sortIcon field="sale_price_fio"></p-sortIcon></th>
-                            <th pSortableColumn="commission_fee_pct">Commission<p-sortIcon field="commission_fee_pct"></p-sortIcon></th>
-                            <th pSortableColumn="date_updated">Date Last Updated<p-sortIcon field="date_updated"></p-sortIcon></th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-domain>
-                        <tr>
-                            <td>{{domain.domain}}</td>
-                            <td>{{domain.sale_price_fio}}</td>
-                            <td>{{domain.commission_fee_pct }}</td>
-                            <td>{{domain.date_updated * 1000 | date: "short"}}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </p-tabPanel>
-            <p-tabPanel header="Cancelled Listings">
-                <p-table #table [value]="cancelledListings" [showCurrentPageReport]="true"
-                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
-                         [paginator]="true" [rows]="20" styleClass="p-datatable-responsive-demo">
-                    <ng-template pTemplate="header">
-                        <tr>
-                            <th pSortableColumn="domain">Domain Name<p-sortIcon field="domain"></p-sortIcon></th>
-                            <th pSortableColumn="sale_price_fio">Price<p-sortIcon field="sale_price_fio"></p-sortIcon></th>
-                            <th pSortableColumn="commission_fee_pct">Commission<p-sortIcon field="commission_fee_pct"></p-sortIcon></th>
-                            <th pSortableColumn="date_updated">Date Last Updated<p-sortIcon field="date_updated"></p-sortIcon></th>
-                        </tr>
-                    </ng-template>
-                    <ng-template pTemplate="body" let-domain>
-                        <tr>
-                            <td>{{domain.domain}}</td>
-                            <td>{{domain.sale_price_fio}}</td>
-                            <td>{{domain.commission_fee_pct }}</td>
-                            <td>{{domain.date_updated * 1000 | date: "short"}}</td>
-                        </tr>
-                    </ng-template>
-                </p-table>
-            </p-tabPanel>
+<!--            <p-tabPanel header="Sold Listings">-->
+<!--                <p-table #table [value]="soldListings" [showCurrentPageReport]="true"-->
+<!--                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"-->
+<!--                         [paginator]="true" [rows]="20" styleClass="p-datatable-responsive-demo">-->
+<!--                    <ng-template pTemplate="header">-->
+<!--                        <tr>-->
+<!--                            <th pSortableColumn="domain">Domain Name-->
+<!--                                <p-sortIcon field="domain"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="sale_price_fio">Price-->
+<!--                                <p-sortIcon field="sale_price_fio"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="commission_fee_pct">Commission-->
+<!--                                <p-sortIcon field="commission_fee_pct"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="date_updated">Date Last Updated-->
+<!--                                <p-sortIcon field="date_updated"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                        </tr>-->
+<!--                    </ng-template>-->
+<!--                    <ng-template pTemplate="body" let-domain>-->
+<!--                        <tr>-->
+<!--                            <td>{{domain.domain}}</td>-->
+<!--                            <td>{{domain.sale_price_fio}}</td>-->
+<!--                            <td>{{domain.commission_fee_pct }}</td>-->
+<!--                            <td>{{domain.date_updated * 1000 | date: "short"}}</td>-->
+<!--                        </tr>-->
+<!--                    </ng-template>-->
+<!--                </p-table>-->
+<!--            </p-tabPanel>-->
+<!--            <p-tabPanel header="Cancelled Listings">-->
+<!--                <p-table #table [value]="cancelledListings" [showCurrentPageReport]="true"-->
+<!--                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"-->
+<!--                         [paginator]="true" [rows]="20" styleClass="p-datatable-responsive-demo">-->
+<!--                    <ng-template pTemplate="header">-->
+<!--                        <tr>-->
+<!--                            <th pSortableColumn="domain">Domain Name-->
+<!--                                <p-sortIcon field="domain"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="sale_price_fio">Price-->
+<!--                                <p-sortIcon field="sale_price_fio"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="commission_fee_pct">Commission-->
+<!--                                <p-sortIcon field="commission_fee_pct"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                            <th pSortableColumn="date_updated">Date Last Updated-->
+<!--                                <p-sortIcon field="date_updated"></p-sortIcon>-->
+<!--                            </th>-->
+<!--                        </tr>-->
+<!--                    </ng-template>-->
+<!--                    <ng-template pTemplate="body" let-domain>-->
+<!--                        <tr>-->
+<!--                            <td>{{domain.domain}}</td>-->
+<!--                            <td>{{domain.sale_price_fio}}</td>-->
+<!--                            <td>{{domain.commission_fee_pct }}</td>-->
+<!--                            <td>{{domain.date_updated * 1000 | date: "short"}}</td>-->
+<!--                        </tr>-->
+<!--                    </ng-template>-->
+<!--                </p-table>-->
+<!--            </p-tabPanel>-->
         </p-tabView>
     </div>
 </div>
