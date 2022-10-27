@@ -1,3 +1,5 @@
 export const environment = {
-  production: true
+  production: true,
+  walletHost: 'fio-mainnet.eosblocksmith.io',
+  apiUrl    : 'api-mainnet.fiomarketplace.com'
 };

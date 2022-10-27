@@ -21,25 +21,29 @@ import {CommonModule} from '@angular/common';
 import {CardModule} from 'primeng/card';
 import {MessageService} from 'primeng/api';
 import {ToastModule} from 'primeng/toast';
-import { WalletService } from './services/wallet.service';
+import {WalletService} from './services/wallet.service';
 import {RatingModule} from "primeng/rating";
 import {DataViewModule} from "primeng/dataview";
 import {DropdownModule} from "primeng/dropdown";
-import { MyDomainsComponent } from './components/my/domains/my-domains.component';
+import {MyDomainsComponent} from './components/my/domains/my-domains.component';
 import {AppMainComponent} from "./app.main.component";
 import {BuyDomainComponent} from "./components/marketplace/buy-domain/buy-domain.component";
 import {ListDomainComponent} from "./components/marketplace/list-domain/list-domain.component";
 import {SearchListingsComponent} from "./components/marketplace/search-domain/search-listings.component";
+import {MyListingsComponent} from "./components/my/listings/my-listings.component";
+import {MySalesComponent} from "./components/my/sales/my-sales.component";
 
 @NgModule({
 	declarations: [
 		AppComponent,
 		DashboardComponent,
-  MyDomainsComponent,
+		MyDomainsComponent,
 		AppMainComponent,
 		BuyDomainComponent,
 		ListDomainComponent,
-		SearchListingsComponent
+		SearchListingsComponent,
+		MyListingsComponent,
+		MySalesComponent
 	],
 	imports     : [
 		BrowserModule,

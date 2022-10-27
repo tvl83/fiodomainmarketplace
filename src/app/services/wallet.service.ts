@@ -14,15 +14,18 @@ import {
 } from '../utilities/constants';
 import {BehaviorSubject, firstValueFrom, Subject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-// import AnchorLinkProvider from 'eos-transit-anchorlink-provider';
 import {Api, JsonRpc} from 'eosjs';
 import AnchorLink, {LinkSession} from 'anchor-link';
 import AnchorLinkBrowserTransport from 'anchor-link-browser-transport';
-// import {initAccessContext, Wallet, WalletAccessContext, WalletProvider} from 'eos-transit';
 import {JsSignatureProvider} from 'eosjs/dist/eosjs-jssig';
 
-const walletHost = `fio-testnet.eosblocksmith.io`;
-const endpoint   = `https://${walletHost}/`;
+import {environment} from '../../environments/environment';
+
+let walletHost = environment.walletHost;
+let apiUrl = environment.apiUrl;
+
+const endpoint = `https://${walletHost}/`;
+const apiEndpoint = `https://${apiUrl}`
 
 const rpc               = new JsonRpc(endpoint);
 const chainId           = 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e';
@@ -53,11 +56,7 @@ export class WalletService {
 		rpc, signatureProvider, chainId, textDecoder: new TextDecoder(), textEncoder: new TextEncoder()
 	});
 
-	// @ts-ignore
 	public session: LinkSession;
-	// accessContext: WalletAccessContext;
-	// walletProviders: WalletProvider[];
-	// public wallet: Wallet | undefined;
 	public fioUsdValue$: Subject<string> = new BehaviorSubject<string>(`0.00`);
 	public isLoggedIn: boolean           = false;
 	public isLoggedIn$: Subject<boolean> = new BehaviorSubject<boolean>(false);
@@ -232,7 +231,7 @@ export class WalletService {
 	}
 
 	public async getActiveListingsByPage(page: number, perPage: number, sort: string = "", order: number = 1, filter: string = "") {
-		const getEscrowListing$ = this.http.post(`https://api-testnet.fiomarketplace.com/get_escrow_listings`, {
+		const getEscrowListing$ = this.http.post(`${apiEndpoint}/get_escrow_listings`, {
 				status: 1,
 				offset: page * perPage,
 				limit : perPage
@@ -361,7 +360,7 @@ export class WalletService {
 				fio_domain   : payload.data.fio_domain,
 				max_buy_price: payload.data.max_buy_price,
 				max_fee      : payload.data.max_fee,
-				tpid         : ""
+				tpid         : TPID.account
 			}
 		};
 
@@ -378,7 +377,7 @@ export class WalletService {
 				fio_domain: payload.data.fio_domain,
 				sale_price: payload.data.sale_price,
 				max_fee   : payload.data.max_fee,
-				tpid      : ""
+				tpid      : TPID.account
 			}
 		};
 		// @ts-ignore
@@ -417,7 +416,7 @@ export class WalletService {
 				actor     : this.session.auth.actor,
 				fio_domain: payload.data.fio_domain,
 				max_fee   : payload.data.max_fee,
-				tpid      : ""
+				tpid      : TPID.account
 			}
 		};
 
