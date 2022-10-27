@@ -21,14 +21,11 @@ import {JsSignatureProvider} from 'eosjs/dist/eosjs-jssig';
 
 import {environment} from '../../environments/environment';
 
-let walletHost = environment.walletHost;
-let apiUrl = environment.apiUrl;
-
-const endpoint = `https://${walletHost}/`;
-const apiEndpoint = `https://${apiUrl}`
+const endpoint = `https://${environment.walletHost}/`;
+const apiEndpoint = `https://${environment.apiUrl}`
 
 const rpc               = new JsonRpc(endpoint);
-const chainId           = 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e';
+const chainId           = environment.chainId;
 const signatureProvider = new JsSignatureProvider(['5KcjPwGJ3MHrWcSLhh7ePt3DfmgRZGrZNjSH4fXUrdqHtj4BoUj']);
 
 // Anchor Link

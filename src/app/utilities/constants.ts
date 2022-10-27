@@ -1,6 +1,7 @@
 import {Api} from 'eosjs';
 import {createHash} from 'crypto';
 import {PermissionLevel} from '@greymass/eosio';
+import { environment } from 'src/environments/environment';
 
 export const Contracts = {
     FioEscrow : 'fio.escrow',
@@ -8,7 +9,7 @@ export const Contracts = {
 };
 
 export const TPID = {
-    account: "fiomarketplace@fiotestnet"
+    account: environment.tpidAddress
 };
 
 export const EscrowActions = {
