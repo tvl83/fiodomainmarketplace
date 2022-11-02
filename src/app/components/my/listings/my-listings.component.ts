@@ -38,7 +38,6 @@ export class MyListingsComponent implements OnInit, OnDestroy {
       this.walletService.selectedAccount$
           .subscribe((next) => {
             this.selectedAccount = next;
-            console.log(`selected account updated`);
             if (!!this.selectedAccount.listings) {
               this.formatListings(this.selectedAccount.listings);
             }
@@ -86,7 +85,6 @@ export class MyListingsComponent implements OnInit, OnDestroy {
         this.cancelledListings.push(updatedListing);
       }
     });
-    console.log(this.activeListings);
   }
 
   public async cancelListing(domain: Listing, sale_id: number) {

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve --configuration production",
+    "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
@@ -24,7 +24,7 @@
     "anchor-link": "^3.2.3",
     "anchor-link-browser-transport": "^3.1.3",
     "assert": "^2.0.0",
-    "axios": "^0.25.0",
+    "axios": "^1.1.3",
     "bn.js": "^5.2.0",
     "body-parser": "^1.19.2",
     "cipher-base": "^1.0.4",

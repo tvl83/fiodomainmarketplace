@@ -110,7 +110,6 @@ export class ListDomainComponent implements OnInit, OnDestroy {
 
       const response = await this.walletService.createListing(this.selectedAccount, action);
       await this.walletService.updateBalance();
-      console.log(response);
       if (response.resolved !== undefined) {
         this.messageService.add({
           severity: 'success',
@@ -130,18 +129,14 @@ export class ListDomainComponent implements OnInit, OnDestroy {
   }
 
   calcFees() {
-    console.log(`calc fees`);
     this.showError = false;
     this.showBreakdown = true;
     let listingPrice   = this.domainSale.get('listingPrice').value;
-    console.log(listingPrice)
     if (listingPrice < 0) {
       this.domainSale.get('listingPrice').setValue(null);
       listingPrice = null;
     }
     if (!!listingPrice) {
-      console.log(!!listingPrice)
-      console.log(this.marketplaceConfig)
       this.marketplaceCommission = ConvertSufToFio(
         (parseFloat(this.marketplaceConfig.commission_fee) / 100) * ConvertAmtToSuf(listingPrice)
       );
