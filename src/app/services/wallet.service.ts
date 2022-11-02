@@ -20,6 +20,7 @@ import AnchorLinkBrowserTransport from 'anchor-link-browser-transport';
 import {JsSignatureProvider} from 'eosjs/dist/eosjs-jssig';
 
 import {environment} from '../../environments/environment';
+import axios from "axios";
 
 const endpoint    = `https://${environment.walletHost}/`;
 const apiEndpoint = `https://${environment.apiUrl}`
@@ -92,16 +93,15 @@ export class WalletService {
     addresses   : []
   };
 
-	public eBreakSet$: Subject<boolean> = new BehaviorSubject<boolean>(false);
-	private eBreakSet: boolean = false;
+  public eBreakSet$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private eBreakSet: boolean          = false;
 
   constructor(private http: HttpClient) {
-		this.setEbreak(true);
-	}
+  }
 
-	public setEbreak(eBreak){
-		this.eBreakSet$.next(eBreak);
-		this.eBreakSet = eBreak;
+  public setEbreak(eBreak) {
+    this.eBreakSet$.next(eBreak);
+    this.eBreakSet = eBreak;
   }
 
   public async getFioUSDValue() {
@@ -119,7 +119,6 @@ export class WalletService {
   }
 
   async logout(): Promise<any> {
-    console.log(this.session.chainId);
     await this.session.remove();
     this.selectedAccount = {
       domains     : [],
@@ -228,18 +227,48 @@ export class WalletService {
   }
 
   public async getActiveListingsByPage(page: number, perPage: number, sort: string = "", order: number = 1, filter: string = "") {
-    const getEscrowListing$ = this.http.post(`${apiEndpoint}/get_escrow_listings`, {
-        status: 1,
-        offset: page * perPage,
-        limit : perPage
+    // const getEscrowListing$ = this.http.post(`${apiEndpoint}/get_escrow_listings`, {
+    //     status: 1,
+    //     offset: page * perPage,
+    //     limit : perPage
+    //   }
+    // );
+    let getEscrowListing$;
+
+    let payload = {
+      status: 1,
+      offset: page * perPage,
+      limit : perPage
+    }
+
+    try {
+      let result = await axios.post(`${endpoint}v1/chain/get_escrow_listings`, {
+        "status": payload.status,
+        "offset": payload.offset,
+        "limit" : payload.limit
+      });
+
+      getEscrowListing$ = result.data;
+    } catch (ex) {
+      console.log(`${ex.response.status} === 403 && ${ex.response.data.message} === 'No Escrow Listings'`, ex);
+      if (ex.response.status === 403 && ex.response.data.message === 'No Escrow Listings') {
+        console.log(`No Escrow Listings and status code 403`);
+        return {
+          more        : false,
+          rows        : [],
+          totalRecords: 0
+        };
+      } else {
+        console.log(`data`, ex.response.data);
+        console.log(`status`, ex.response.status);
+        console.log(`headers`, ex.response.headers);
+        console.error(`error`, ex)
       }
-    );
+    }
+
 
     const results: any = await firstValueFrom(getEscrowListing$);
     const response     = {more: results.more, rows: [], totalRecords: 0};
-
-    console.log(`results`, results)
-    console.log(`response`, response)
 
     if (filter !== null) {
       results.listings.filter(((row: any) => row.domain.includes(filter)));
@@ -299,8 +328,6 @@ export class WalletService {
     }
 
     response.rows = results.listings;
-    console.log(`page: `, page)
-    console.log(`perPage: `, perPage)
     page += 1;
 
     if (results.listings.length < perPage) {
