@@ -34,43 +34,43 @@ import {MyListingsComponent} from "./components/my/listings/my-listings.componen
 import {MySalesComponent} from "./components/my/sales/my-sales.component";
 
 @NgModule({
-	declarations: [
-		AppComponent,
-		DashboardComponent,
-		MyDomainsComponent,
-		AppMainComponent,
-		BuyDomainComponent,
-		ListDomainComponent,
-		SearchListingsComponent,
-		MyListingsComponent,
-		MySalesComponent
-	],
-	imports     : [
-		BrowserModule,
-		AppRoutingModule,
-		StyleClassModule,
-		RippleModule,
-		ButtonModule,
-		MenuModule,
-		TableModule,
-		InputTextModule,
-		InputNumberModule,
-		HttpClientModule,
-		BrowserAnimationsModule,
-		ButtonModule,
-		TabViewModule,
-		ReactiveFormsModule,
-		CardModule,
-		ToastModule,
-		FormsModule,
-		RatingModule,
-		DataViewModule,
-		DropdownModule
-	],
-	providers   : [
-		WalletService, MessageService
-	],
-	bootstrap   : [AppComponent]
+  declarations: [
+    AppComponent,
+    DashboardComponent,
+    MyDomainsComponent,
+    AppMainComponent,
+    BuyDomainComponent,
+    ListDomainComponent,
+    SearchListingsComponent,
+    MyListingsComponent,
+    MySalesComponent
+  ],
+  imports     : [
+    BrowserModule,
+    AppRoutingModule,
+    StyleClassModule,
+    RippleModule,
+    ButtonModule,
+    MenuModule,
+    TableModule,
+    InputTextModule,
+    InputNumberModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ButtonModule,
+    TabViewModule,
+    ReactiveFormsModule,
+    CardModule,
+    ToastModule,
+    FormsModule,
+    RatingModule,
+    DataViewModule,
+    DropdownModule
+  ],
+  providers   : [
+    WalletService, MessageService
+  ],
+  bootstrap   : [AppComponent]
 })
 export class AppModule {
 }
