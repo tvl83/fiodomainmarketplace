@@ -1,42 +1,33 @@
-<!--<div class="surface-ground px-4 py-5 md:px-6 lg:px-8">-->
-<!--    <div class="grid">-->
-<!--        <div class="col-12 md:col-6 lg:col-6 p-6">-->
-<!--            <div class="p-3 text-center bg-blue-500" style="border-radius: 12px">-->
-<!--                <span class="inline-flex justify-content-center align-items-center bg-blue-600 border-circle mb-3" style="width:49px; height: 49px">-->
-<!--                    <i class="pi pi-inbox text-xl text-white"></i>-->
-<!--                </span>-->
-<!--                <div class="text-2xl font-medium text-white mb-2"> {{counts.listings}} </div>-->
-<!--                <span class="text-blue-100 font-medium">Domains Listed</span>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-12 md:col-6 lg:col-6 p-6">-->
-<!--            <div class="p-3 text-center bg-cyan-500" style="border-radius: 12px">-->
-<!--                <span class="inline-flex justify-content-center align-items-center bg-cyan-600 border-circle mb-3" style="width:49px; height: 49px">-->
-<!--                    <i class="pi pi-dollar text-xl text-white"></i>-->
-<!--                </span>-->
-<!--                <div class="text-2xl font-medium text-white mb-2"> {{counts.sold}} </div>-->
-<!--                <span class="text-purple-100 font-medium">Domains Sold</span>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
 <div *ngIf="!eBreakSet" class="card bg-blue-200">
-    <p-dataView #dv [value]="listings" [showCurrentPageReport]="true" [paginator]="true" [rows]="4" filterBy="name"
-                [sortField]="sortField" [sortOrder]="sortOrder" layout="grid" [lazy]="true" (onLazyLoad)="loadListings($event)"
-                 [totalRecords]="totalRecords"
-                [loading]="loading" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries">
+    <p-dataView #dv
+                filterBy="name"
+                layout="list"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                emptyMessage="No domains found."
+                [value]="listings"
+                [showCurrentPageReport]="true"
+                [paginator]="true"
+                [rows]="10"
+                [sortField]="sortField"
+                [sortOrder]="sortOrder"
+                [lazy]="true"
+                (onLazyLoad)="loadListings($event)"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[5, 10, 25, 100]"
+                [loading]="loading"
+    >
         <ng-template pTemplate="header">
             <div class="flex flex-column md:flex-row md:justify-content-between">
-<!--                <p-dropdown [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By Price" (onChange)="onSortChange($event)" styleClass="mb-2 md:mb-0"></p-dropdown>-->
-                <span class="p-input-icon-left mb-2 md:mb-0">
-                    <i class="pi pi-search"></i>
-                    <input type="search" pInputText placeholder="Search by Name">
-                </span>
+                <!--                <p-dropdown [options]="sortOptions" [(ngModel)]="sortKey" placeholder="Sort By Price" (onChange)="onSortChange($event)" styleClass="mb-2 md:mb-0"></p-dropdown>-->
+                <!--                <span class="p-input-icon-left mb-2 md:mb-0">-->
+                <!--                    <i class="pi pi-search"></i>-->
+                <!--                    <input type="search" pInputText placeholder="Search by Name">-->
+                <!--                </span>-->
             </div>
         </ng-template>
         <ng-template let-listing pTemplate="listItem">
             <div class="col-12">
-                <div class="product-list-item bg-blue-800">
+                <div class="product-list-item">
                     <div class="product-list-detail">
                         <div class="product-name">{{listing.domain}}</div>
                         <div class="product-description">{{listing.owner}}</div>
@@ -44,7 +35,8 @@
                     <div class="product-list-action">
                         <span class="product-price">{{listing.sale_price_fio}}</span>
                         <p-button [routerLink]="['/marketplace/buy-domain/', listing.domain]"
-                                  [state]="{data:{ listing: listing }}" icon="pi pi-shopping-cart" label="Buy Domain"></p-button>
+                                  [state]="{data:{ listing: listing }}" icon="pi pi-shopping-cart"
+                                  label="Buy Domain"></p-button>
                     </div>
                 </div>
             </div>

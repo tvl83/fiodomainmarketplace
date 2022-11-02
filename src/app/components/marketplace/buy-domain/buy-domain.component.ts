@@ -69,7 +69,6 @@ export class BuyDomainComponent implements OnInit, OnDestroy {
                         if (history.state.data !== undefined) {
                             this.listing                = history.state.data.listing;
                             this.listing.sale_price_fio = ConvertSufToFio(this.listing.sale_price);
-                            console.log(`listing`, this.listing);
                         } else {
                             this.domainForSale          = this.route.snapshot.paramMap.get('domainname') || "";
                             this.listing                = await this.walletService.getDomainListingInfo(this.domainForSale);
@@ -102,7 +101,7 @@ export class BuyDomainComponent implements OnInit, OnDestroy {
                     max_buy_price: this.listing.sale_price,
                     max_fee      : ConvertAmtToSuf(5),
                     sale_id      : this.listing.id,
-                    tpid         : ""
+                    tpid         : TPID.account
                 },
                 name         : ''
             };

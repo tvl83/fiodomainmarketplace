@@ -1,13 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {
-    AccountInfo,
-    Contracts,
-    ConvertAmtToSuf,
-    ConvertFioToAmt,
-    ConvertSufToFio,
-    CreateListingPayload,
-    EscrowActions,
-    MarketplaceConfig, TPID
+  AccountInfo,
+  Contracts,
+  ConvertAmtToSuf,
+  ConvertFioToAmt,
+  ConvertSufToFio,
+  CreateListingPayload,
+  EscrowActions,
+  MarketplaceConfig, TPID
 } from 'src/app/utilities/constants';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {WalletService} from '../../../services/wallet.service';
@@ -38,6 +38,7 @@ export class ListDomainComponent implements OnInit, OnDestroy {
   public fioUsdValue: number = 0;
   public selectedAccount: AccountInfo = {};
   public showBreakdown: boolean = false;
+  public showError: boolean = false;
 
   constructor(private fb: FormBuilder,
               private walletService: WalletService,
@@ -103,13 +104,12 @@ export class ListDomainComponent implements OnInit, OnDestroy {
           fio_domain: this.domainForSale,
           max_fee   : ConvertAmtToSuf(5),
           sale_price: ConvertAmtToSuf(this.domainSale.get('listingPrice').value),
-          tpid      : ""
+          tpid      : TPID.account
         }
       };
 
       const response = await this.walletService.createListing(this.selectedAccount, action);
       await this.walletService.updateBalance();
-      console.log(response);
       if (response.resolved !== undefined) {
         this.messageService.add({
           severity: 'success',
@@ -129,7 +129,7 @@ export class ListDomainComponent implements OnInit, OnDestroy {
   }
 
   calcFees() {
-    console.log(`calc fees`);
+    this.showError = false;
     this.showBreakdown = true;
     let listingPrice   = this.domainSale.get('listingPrice').value;
     if (listingPrice < 0) {
@@ -144,6 +144,10 @@ export class ListDomainComponent implements OnInit, OnDestroy {
       this.listingFee       = ConvertSufToFio(this.marketplaceConfig.listing_fee);
       this.receiveAmountFio = ConvertSufToFio(ConvertAmtToSuf(listingPrice) - ConvertAmtToSuf(ConvertFioToAmt(this.marketplaceCommission)));
       this.receiveAmount    = (ConvertFioToAmt(this.receiveAmountFio));
+    }
+    if(listingPrice > 999999){
+      this.showBreakdown = false;
+      this.showError = true;
     }
   }
 }

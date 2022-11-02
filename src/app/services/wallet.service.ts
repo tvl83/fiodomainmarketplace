@@ -1,31 +1,32 @@
 import {Injectable} from '@angular/core';
 import {
-	AccountInfo,
-	BuyListingPayload,
-	CancelListingPayload,
-	Contracts,
-	ConvertSufToFio,
-	CreateListingPayload,
-	EscrowActions,
-	EscrowTables,
-	MarketplaceConfig,
-	stringToHash,
-	TPID
+  AccountInfo,
+  BuyListingPayload,
+  CancelListingPayload,
+  Contracts,
+  ConvertSufToFio,
+  CreateListingPayload,
+  EscrowActions,
+  EscrowTables,
+  MarketplaceConfig,
+  stringToHash,
+  TPID
 } from '../utilities/constants';
 import {BehaviorSubject, firstValueFrom, Subject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
-// import AnchorLinkProvider from 'eos-transit-anchorlink-provider';
 import {Api, JsonRpc} from 'eosjs';
 import AnchorLink, {LinkSession} from 'anchor-link';
 import AnchorLinkBrowserTransport from 'anchor-link-browser-transport';
-// import {initAccessContext, Wallet, WalletAccessContext, WalletProvider} from 'eos-transit';
 import {JsSignatureProvider} from 'eosjs/dist/eosjs-jssig';
 
-const walletHost = `fio-testnet.eosblocksmith.io`;
-const endpoint   = `https://${walletHost}/`;
+import {environment} from '../../environments/environment';
+import axios from "axios";
+
+const endpoint    = `https://${environment.walletHost}/`;
+const apiEndpoint = `https://${environment.apiUrl}`
 
 const rpc               = new JsonRpc(endpoint);
-const chainId           = 'b20901380af44ef59c5918439a1f9a41d83669020319a80574b804a5f95cbd7e';
+const chainId           = environment.chainId;
 const signatureProvider = new JsSignatureProvider(['5KcjPwGJ3MHrWcSLhh7ePt3DfmgRZGrZNjSH4fXUrdqHtj4BoUj']);
 
 // Anchor Link
@@ -34,393 +35,416 @@ const appNameId = 'fiomarketplace';
 const transport = new AnchorLinkBrowserTransport();
 // initialize the link
 const link      = new AnchorLink({
-	transport,
-	chains: [{
-		chainId,
-		nodeUrl: endpoint,
-	}]
+  transport,
+  chains: [{
+    chainId,
+    nodeUrl: endpoint,
+  }]
 });
 
 
 // end Anchor Link
 
 @Injectable({
-	providedIn: 'root'
+  providedIn: 'root'
 })
 export class WalletService {
 
-	public api = new Api({
-		rpc, signatureProvider, chainId, textDecoder: new TextDecoder(), textEncoder: new TextEncoder()
-	});
+  public api = new Api({
+    rpc, signatureProvider, chainId, textDecoder: new TextDecoder(), textEncoder: new TextEncoder()
+  });
 
-	// @ts-ignore
-	public session: LinkSession;
-	// accessContext: WalletAccessContext;
-	// walletProviders: WalletProvider[];
-	// public wallet: Wallet | undefined;
-	public fioUsdValue$: Subject<string> = new BehaviorSubject<string>(`0.00`);
-	public isLoggedIn: boolean           = false;
-	public isLoggedIn$: Subject<boolean> = new BehaviorSubject<boolean>(false);
-	public accountName: string           = "";
+  public session: LinkSession;
+  public fioUsdValue$: Subject<string> = new BehaviorSubject<string>(`0.00`);
+  public isLoggedIn: boolean           = false;
+  public isLoggedIn$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  public accountName: string           = "";
 
-	private marketplaceConfig: MarketplaceConfig          = {owner: '', commission_fee: '', listing_fee: 0, e_break: 0};
-	public marketplaceConfig$: Subject<MarketplaceConfig> = new BehaviorSubject<MarketplaceConfig>(
-		{
-			owner         : '',
-			commission_fee: '',
-			listing_fee   : 0,
-			e_break       : 0
-		}
-	);
+  private marketplaceConfig: MarketplaceConfig          = {owner: '', commission_fee: '', listing_fee: 0, e_break: 0};
+  public marketplaceConfig$: Subject<MarketplaceConfig> = new BehaviorSubject<MarketplaceConfig>(
+    {
+      owner         : '',
+      commission_fee: '',
+      listing_fee   : 0,
+      e_break       : 0
+    }
+  );
 
-	public selectedAccount$: Subject<AccountInfo> = new BehaviorSubject<AccountInfo>(
-		{
-			domains     : [],
-			account_name: '',
-			api         : undefined,
-			balance     : {amt: 0, fio: '', sufs: 0},
-			listings    : [],
-			nickname    : '',
-			publicKey   : '',
-			addresses   : []
-		});
-	public accounts$: Subject<AccountInfo[]>      = new BehaviorSubject<AccountInfo[]>([]);
-	private selectedAccount: AccountInfo          = {
-		domains     : [],
-		account_name: '',
-		api         : undefined,
-		balance     : {amt: 0, fio: '', sufs: 0},
-		listings    : [],
-		nickname    : '',
-		publicKey   : '',
-		addresses   : []
-	};
+  public selectedAccount$: Subject<AccountInfo> = new BehaviorSubject<AccountInfo>(
+    {
+      domains     : [],
+      account_name: '',
+      api         : undefined,
+      balance     : {amt: 0, fio: '', sufs: 0},
+      listings    : [],
+      nickname    : '',
+      publicKey   : '',
+      addresses   : []
+    });
+  public accounts$: Subject<AccountInfo[]>      = new BehaviorSubject<AccountInfo[]>([]);
+  private selectedAccount: AccountInfo          = {
+    domains     : [],
+    account_name: '',
+    api         : undefined,
+    balance     : {amt: 0, fio: '', sufs: 0},
+    listings    : [],
+    nickname    : '',
+    publicKey   : '',
+    addresses   : []
+  };
 
-	public eBreakSet$: Subject<boolean> = new BehaviorSubject<boolean>(false);
-	private eBreakSet: boolean = false;
+  public eBreakSet$: Subject<boolean> = new BehaviorSubject<boolean>(false);
+  private eBreakSet: boolean          = false;
 
-	constructor(private http: HttpClient) {
-		this.setEbreak(true);
-	}
+  constructor(private http: HttpClient) {
+  }
 
-	public setEbreak(eBreak){
-		this.eBreakSet$.next(eBreak);
-		this.eBreakSet = eBreak;
-	}
+  public setEbreak(eBreak) {
+    this.eBreakSet$.next(eBreak);
+    this.eBreakSet = eBreak;
+  }
 
-	public async getFioUSDValue() {
-		this.http.get(`https://api.coingecko.com/api/v3/simple/price?ids=fio-protocol&vs_currencies=usd`)
-		    .subscribe((response: any) => {
-			    this.fioUsdValue$.next(response['fio-protocol'].usd);
-		    });
-	}
+  public async getFioUSDValue() {
+    this.http.get(`https://api.coingecko.com/api/v3/simple/price?ids=fio-protocol&vs_currencies=usd`)
+        .subscribe((response: any) => {
+          this.fioUsdValue$.next(response['fio-protocol'].usd);
+        });
+  }
 
-	async login(): Promise<any> {
-		const identity  = await link.login(appNameId);
-		const {session} = identity;
-		this.session    = session;
-		await this.setLoggedIn(true);
-	}
+  async login(): Promise<any> {
+    const identity  = await link.login(appNameId);
+    const {session} = identity;
+    this.session    = session;
+    await this.setLoggedIn(true);
+  }
 
-	async logout(): Promise<any> {
-		console.log(this.session.chainId);
-		await this.session.remove();
-		this.selectedAccount = {
-			domains     : [],
-			account_name: '',
-			api         : undefined,
-			balance     : {amt: 0, fio: '', sufs: 0},
-			listings    : [],
-			nickname    : '',
-			publicKey   : '',
-			addresses   : []
-		};
-		this.selectedAccount$.next(this.selectedAccount);
-		await this.setLoggedIn(false);
-	}
+  async logout(): Promise<any> {
+    await this.session.remove();
+    this.selectedAccount = {
+      domains     : [],
+      account_name: '',
+      api         : undefined,
+      balance     : {amt: 0, fio: '', sufs: 0},
+      listings    : [],
+      nickname    : '',
+      publicKey   : '',
+      addresses   : []
+    };
+    this.selectedAccount$.next(this.selectedAccount);
+    await this.setLoggedIn(false);
+  }
 
-	public async setLoggedIn(value: boolean): Promise<void> {
-		if (value) {
-			this.accountName                  = this.session.auth.toString().split('@')[0];
-			this.selectedAccount.account_name = this.session.auth.toString().split('@')[0];
-			const accounts                    = await this.api.rpc.get_table_rows({
-				table      : 'accountmap',
-				scope      : 'fio.address',
-				code       : 'fio.address',
-				upper_bound: this.selectedAccount?.account_name,
-				lower_bound: this.selectedAccount?.account_name,
-				json       : true,
-				limit      : 1
-			});
+  public async setLoggedIn(value: boolean): Promise<void> {
+    if (value) {
+      this.accountName                  = this.session.auth.toString().split('@')[0];
+      this.selectedAccount.account_name = this.session.auth.toString().split('@')[0];
+      const accounts                    = await this.api.rpc.get_table_rows({
+        table      : 'accountmap',
+        scope      : 'fio.address',
+        code       : 'fio.address',
+        upper_bound: this.selectedAccount?.account_name,
+        lower_bound: this.selectedAccount?.account_name,
+        json       : true,
+        limit      : 1
+      });
 
-			if (accounts.rows.length > 0) {
-				this.selectedAccount.publicKey = accounts.rows[0].clientkey;
-			}
+      if (accounts.rows.length > 0) {
+        this.selectedAccount.publicKey = accounts.rows[0].clientkey;
+      }
 
-			this.selectedAccount$.next(this.selectedAccount);
+      this.selectedAccount$.next(this.selectedAccount);
 
-			this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
-			await this.updateDomains();
-			await this.updateBalance();
-			await this.updateListings();
-		}
-		this.isLoggedIn = value;
-		this.isLoggedIn$.next(value);
-	}
+      this.getMarketplaceConfig().then(r => console.log('marketplaceConfig'));
+      await this.updateDomains();
+      await this.updateBalance();
+      await this.updateListings();
+    }
+    this.isLoggedIn = value;
+    this.isLoggedIn$.next(value);
+  }
 
-	private async getMarketplaceConfig() {
-		const results: any = await this.api.rpc
-		                               .get_table_rows({
-			                               table: EscrowTables.MarketplaceConfigTable,
-			                               scope: Contracts.FioEscrow,
-			                               code : Contracts.FioEscrow,
-			                               json : true,
-			                               limit: 1
-		                               });
-		this.marketplaceConfig$.next(results.rows[0]);
-	}
+  private async getMarketplaceConfig() {
+    const results: any = await this.api.rpc
+                                   .get_table_rows({
+                                     table: EscrowTables.MarketplaceConfigTable,
+                                     scope: Contracts.FioEscrow,
+                                     code : Contracts.FioEscrow,
+                                     json : true,
+                                     limit: 1
+                                   });
+    this.marketplaceConfig$.next(results.rows[0]);
+  }
 
-	async restoreSession() {
-		const session = await link.restoreSession(appNameId);
-		// @ts-ignore
-		this.session  = session;
-		if (this.session !== null) {
-			await this.setLoggedIn(true);
-		}
-	}
+  async restoreSession() {
+    const session = await link.restoreSession(appNameId);
+    // @ts-ignore
+    this.session  = session;
+    if (this.session !== null) {
+      await this.setLoggedIn(true);
+    }
+  }
 
-	public async updateBalance() {
-		if (this.selectedAccount.publicKey !== undefined) {
-			this.api.rpc.get_fio_balance(this.selectedAccount.publicKey)
-			    .then((result: any) => {
-				    if (this.selectedAccount.balance !== undefined) {
-					    this.selectedAccount.balance.sufs = result.available;
-					    this.selectedAccount.balance.fio  = ConvertSufToFio(result.available);
-					    this.selectedAccount$.next(this.selectedAccount);
-				    }
-			    })
-			    .catch(err => {
-				    console.error(err);
-			    });
-		}
-	}
+  public async updateBalance() {
+    if (this.selectedAccount.publicKey !== undefined) {
+      this.api.rpc.get_fio_balance(this.selectedAccount.publicKey)
+          .then((result: any) => {
+            if (this.selectedAccount.balance !== undefined) {
+              this.selectedAccount.balance.sufs = result.available;
+              this.selectedAccount.balance.fio  = ConvertSufToFio(result.available);
+              this.selectedAccount$.next(this.selectedAccount);
+            }
+          })
+          .catch(err => {
+            console.error(err);
+          });
+    }
+  }
 
-	async countListings() {
+  async countListings() {
 
-		const response = {
-			listings: 0,
-			sold    : 0
-		};
+    const response = {
+      listings: 0,
+      sold    : 0
+    };
 
-		const listings = await this.api.rpc
-		                           .get_table_rows({
-			                           table: 'domainsales',
-			                           code : 'fio.escrow',
-			                           scope: 'fio.escrow',
-			                           limit: 2500
-		                           });
+    const listings = await this.api.rpc
+                               .get_table_rows({
+                                 table: 'domainsales',
+                                 code : 'fio.escrow',
+                                 scope: 'fio.escrow',
+                                 limit: 2500
+                               });
 
-		listings.rows.forEach(listing => {
-			if (listing.status === 1) {
-				response.listings++;
-			} else if (listing.status === 2) {
-				response.sold++;
-			}
-		});
+    listings.rows.forEach(listing => {
+      if (listing.status === 1) {
+        response.listings++;
+      } else if (listing.status === 2) {
+        response.sold++;
+      }
+    });
 
-		return response;
-	}
+    return response;
+  }
 
-	public async getActiveListingsByPage(page: number, perPage: number, sort: string = "", order: number = 1, filter: string = "") {
-		const getEscrowListing$ = this.http.post(`https://api-testnet.fiomarketplace.com/get_escrow_listings`, {
-				status: 1,
-				offset: page * perPage,
-				limit : perPage
-			}
-		);
+  public async getActiveListingsByPage(page: number, perPage: number, sort: string = "", order: number = 1, filter: string = "") {
+    // const getEscrowListing$ = this.http.post(`${apiEndpoint}/get_escrow_listings`, {
+    //     status: 1,
+    //     offset: page * perPage,
+    //     limit : perPage
+    //   }
+    // );
+    let getEscrowListing$;
 
-		const results: any = await firstValueFrom(getEscrowListing$);
-		const response     = {more: results.more, rows: [], totalRecords: 0};
+    let payload = {
+      status: 1,
+      offset: page * perPage,
+      limit : perPage
+    }
 
-		console.log(`results`, results)
-		console.log(`response`, response)
+    try {
+      let result = await axios.post(`${endpoint}v1/chain/get_escrow_listings`, {
+        "status": payload.status,
+        "offset": payload.offset,
+        "limit" : payload.limit
+      });
 
-		if (filter !== null) {
-			results.listings.filter(((row: any) => row.domain.includes(filter)));
-		}
+      getEscrowListing$ = result.data;
+    } catch (ex) {
+      console.log(`${ex.response.status} === 403 && ${ex.response.data.message} === 'No Escrow Listings'`, ex);
+      if (ex.response.status === 403 && ex.response.data.message === 'No Escrow Listings') {
+        console.log(`No Escrow Listings and status code 403`);
+        return {
+          more        : false,
+          rows        : [],
+          totalRecords: 0
+        };
+      } else {
+        console.log(`data`, ex.response.data);
+        console.log(`status`, ex.response.status);
+        console.log(`headers`, ex.response.headers);
+        console.error(`error`, ex)
+      }
+    }
 
-		if (sort !== null) {
-			switch (sort) {
-				case 'date_updated':
-					results.listings.sort((a: any, b: any) => {
-						if (a.date_updated < b.date_updated) {
-							return 1;
-						}
-						if (a.date_updated > b.date_updated) {
-							return -1;
-						}
-						return 0;
-					});
-					break;
-				case 'domain':
-					results.listings.sort((a: any, b: any) => {
-						if (a.domain < b.domain) {
-							return 1;
-						}
-						if (a.domain > b.domain) {
-							return -1;
-						}
-						return 0;
-					});
-					break;
-				case 'owner':
-					results.listings.sort((a: any, b: any) => {
-						if (a.owner < b.owner) {
-							return 1;
-						}
-						if (a.owner > b.owner) {
-							return -1;
-						}
-						return 0;
-					});
-					break;
-				case 'sale_price_fio':
-					results.listings.sort((a: any, b: any) => {
-						if (a.sale_price < b.sale_price) {
-							return 1;
-						}
-						if (a.sale_price > b.sale_price) {
-							return -1;
-						}
-						return 0;
-					});
-					break;
-			}
 
-			if (order === -1) {
-				results.listings.reverse();
-			}
-		}
+    const results: any = await firstValueFrom(getEscrowListing$);
+    const response     = {more: results.more, rows: [], totalRecords: 0};
 
-		response.rows = results.listings;
-		console.log(`page: `, page)
-		console.log(`perPage: `, perPage)
-		page += 1;
+    if (filter !== null) {
+      results.listings.filter(((row: any) => row.domain.includes(filter)));
+    }
 
-		if (results.listings.length < perPage) {
-			response.totalRecords = ((page * perPage)) + results.more - (perPage - results.listings.length);
-		} else {
-			response.totalRecords = ((page * perPage)) + results.more;
-		}
-		return response;
-	}
+    if (sort !== null) {
+      switch (sort) {
+        case 'date_updated':
+          results.listings.sort((a: any, b: any) => {
+            if (a.date_updated < b.date_updated) {
+              return 1;
+            }
+            if (a.date_updated > b.date_updated) {
+              return -1;
+            }
+            return 0;
+          });
+          break;
+        case 'domain':
+          results.listings.sort((a: any, b: any) => {
+            if (a.domain < b.domain) {
+              return 1;
+            }
+            if (a.domain > b.domain) {
+              return -1;
+            }
+            return 0;
+          });
+          break;
+        case 'owner':
+          results.listings.sort((a: any, b: any) => {
+            if (a.owner < b.owner) {
+              return 1;
+            }
+            if (a.owner > b.owner) {
+              return -1;
+            }
+            return 0;
+          });
+          break;
+        case 'sale_price_fio':
+          results.listings.sort((a: any, b: any) => {
+            if (a.sale_price < b.sale_price) {
+              return 1;
+            }
+            if (a.sale_price > b.sale_price) {
+              return -1;
+            }
+            return 0;
+          });
+          break;
+      }
 
-	public async updateDomains() {
-		let pubkey = '';
-		if (this.isLoggedIn && this.selectedAccount) {
-			if (this.selectedAccount.publicKey !== undefined)
-				pubkey = this.selectedAccount.publicKey;
-			this.api.rpc.get_fio_domains(pubkey)
-			    .then((result: any) => {
-				    this.selectedAccount.domains = result.fio_domains;
-				    this.selectedAccount$.next(this.selectedAccount);
-			    })
-			    .catch(err => {
-				    console.error(err);
-			    });
-		}
-	}
+      if (order === -1) {
+        results.listings.reverse();
+      }
+    }
 
-	async getDomainListingInfo(domainName: string) {
-		return await this.searchByDomainName(domainName);
-	}
+    response.rows = results.listings;
+    page += 1;
 
-	async searchByDomainName(domainName: string) {
-		const hashedTerm = stringToHash(domainName);
-		const result     = await this.api.rpc
-		                             .get_table_rows({
-			                             table         : 'domainsales',
-			                             code          : 'fio.escrow',
-			                             scope         : 'fio.escrow',
-			                             index_position: 2,
-			                             key_type      : 'i128',
-			                             lower_bound   : hashedTerm,
-			                             upper_bound   : hashedTerm
-		                             });
-		return result.rows[0];
-	}
+    if (results.listings.length < perPage) {
+      response.totalRecords = ((page * perPage)) + results.more - (perPage - results.listings.length);
+    } else {
+      response.totalRecords = ((page * perPage)) + results.more;
+    }
+    return response;
+  }
 
-	async buyListing(account: AccountInfo, payload: BuyListingPayload) {
-		const action: BuyListingPayload = {
-			account      : Contracts.FioEscrow,
-			name         : EscrowActions.BuyDomainSale,
-			authorization: [this.session.auth],
-			data         : {
-				actor        : this.session.auth.actor,
-				sale_id      : payload.data.sale_id,
-				fio_domain   : payload.data.fio_domain,
-				max_buy_price: payload.data.max_buy_price,
-				max_fee      : payload.data.max_fee,
-				tpid         : ""
-			}
-		};
+  public async updateDomains() {
+    let pubkey = '';
+    if (this.isLoggedIn && this.selectedAccount) {
+      if (this.selectedAccount.publicKey !== undefined)
+        pubkey = this.selectedAccount.publicKey;
+      this.api.rpc.get_fio_domains(pubkey)
+          .then((result: any) => {
+            this.selectedAccount.domains = result.fio_domains;
+            this.selectedAccount$.next(this.selectedAccount);
+          })
+          .catch(err => {
+            console.error(err);
+          });
+    }
+  }
 
-		return await this.session.transact({action});
-	}
+  async getDomainListingInfo(domainName: string) {
+    return await this.searchByDomainName(domainName);
+  }
 
-	async createListing(account: AccountInfo, payload: CreateListingPayload) {
-		const action: CreateListingPayload = {
-			account      : Contracts.FioEscrow,
-			name         : EscrowActions.ListDomain,
-			authorization: [this.session.auth],
-			data         : {
-				actor     : this.session.auth.actor,
-				fio_domain: payload.data.fio_domain,
-				sale_price: payload.data.sale_price,
-				max_fee   : payload.data.max_fee,
-				tpid      : ""
-			}
-		};
-		// @ts-ignore
-		return await this.session.transact({action});
-	}
+  async searchByDomainName(domainName: string) {
+    const hashedTerm = stringToHash(domainName);
+    const result     = await this.api.rpc
+                                 .get_table_rows({
+                                   table         : 'domainsales',
+                                   code          : 'fio.escrow',
+                                   scope         : 'fio.escrow',
+                                   index_position: 2,
+                                   key_type      : 'i128',
+                                   lower_bound   : hashedTerm,
+                                   upper_bound   : hashedTerm
+                                 });
+    return result.rows[0];
+  }
 
-	public async updateListings() {
-		const results: any = await this.api.rpc
-		                               .get_table_rows({
-			                               table         : EscrowTables.DomainSalesTable,
-			                               scope         : Contracts.FioEscrow,
-			                               code          : Contracts.FioEscrow,
-			                               json          : true,
-			                               index_position: 1,
-			                               limit         : 100
-		                               })
-		                               .catch(err => {
-			                               console.error(err);
-		                               });
+  async buyListing(account: AccountInfo, payload: BuyListingPayload) {
+    const action: BuyListingPayload = {
+      account      : Contracts.FioEscrow,
+      name         : EscrowActions.BuyDomainSale,
+      authorization: [this.session.auth],
+      data         : {
+        actor        : this.session.auth.actor,
+        sale_id      : payload.data.sale_id,
+        fio_domain   : payload.data.fio_domain,
+        max_buy_price: payload.data.max_buy_price,
+        max_fee      : payload.data.max_fee,
+        tpid         : TPID.account
+      }
+    };
 
-		this.selectedAccount.listings = [];
-		results.rows.forEach((row: any) => {
-			if (row.owner === this.selectedAccount.account_name) {
-				this.selectedAccount.listings.push(row);
-			}
-		});
-		this.selectedAccount$.next(this.selectedAccount);
-	}
+    return await this.session.transact({action});
+  }
 
-	async cancelListing(account: AccountInfo, payload: CancelListingPayload) {
-		const action: CancelListingPayload = {
-			account      : Contracts.FioEscrow,
-			name         : EscrowActions.CancelDomainSale,
-			authorization: [this.session.auth],
-			data         : {
-				actor     : this.session.auth.actor,
-				fio_domain: payload.data.fio_domain,
-				max_fee   : payload.data.max_fee,
-				tpid      : ""
-			}
-		};
+  async createListing(account: AccountInfo, payload: CreateListingPayload) {
+    const action: CreateListingPayload = {
+      account      : Contracts.FioEscrow,
+      name         : EscrowActions.ListDomain,
+      authorization: [this.session.auth],
+      data         : {
+        actor     : this.session.auth.actor,
+        fio_domain: payload.data.fio_domain,
+        sale_price: payload.data.sale_price,
+        max_fee   : payload.data.max_fee,
+        tpid      : TPID.account
+      }
+    };
+    // @ts-ignore
+    return await this.session.transact({action});
+  }
 
-		return await this.session.transact({action});
-	}
+  public async updateListings() {
+    const results: any = await this.api.rpc
+                                   .get_table_rows({
+                                     table         : EscrowTables.DomainSalesTable,
+                                     scope         : Contracts.FioEscrow,
+                                     code          : Contracts.FioEscrow,
+                                     json          : true,
+                                     index_position: 1,
+                                     limit         : 100
+                                   })
+                                   .catch(err => {
+                                     console.error(err);
+                                   });
+
+    this.selectedAccount.listings = [];
+    results.rows.forEach((row: any) => {
+      if (row.owner === this.selectedAccount.account_name) {
+        this.selectedAccount.listings.push(row);
+      }
+    });
+    this.selectedAccount$.next(this.selectedAccount);
+  }
+
+  async cancelListing(account: AccountInfo, payload: CancelListingPayload) {
+    const action: CancelListingPayload = {
+      account      : Contracts.FioEscrow,
+      name         : EscrowActions.CancelDomainSale,
+      authorization: [this.session.auth],
+      data         : {
+        sale_id   : payload.data.sale_id,
+        actor     : this.session.auth.actor,
+        fio_domain: payload.data.fio_domain,
+        max_fee   : payload.data.max_fee,
+        tpid      : TPID.account
+      }
+    };
+
+    return await this.session.transact({action});
+  }
 }

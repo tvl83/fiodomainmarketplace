@@ -1,6 +1,7 @@
 import {Api} from 'eosjs';
 import {createHash} from 'crypto';
 import {PermissionLevel} from '@greymass/eosio';
+import { environment } from 'src/environments/environment';
 
 export const Contracts = {
     FioEscrow : 'fio.escrow',
@@ -8,7 +9,7 @@ export const Contracts = {
 };
 
 export const TPID = {
-    account: ""
+    account: environment.tpidAddress
 };
 
 export const EscrowActions = {
@@ -100,6 +101,7 @@ export interface CancelListingPayload {
     authorization: PermissionLevel[];
     data: {
         actor: {};
+        sale_id: number;
         fio_domain: string;
         max_fee: number;
         tpid: string;
