@@ -249,6 +249,7 @@ export class WalletService {
       });
 
       getEscrowListing$ = result.data;
+      console.log(`getEscrowListing$`, getEscrowListing$);
     } catch (ex) {
       console.log(`${ex.response.status} === 403 && ${ex.response.data.message} === 'No Escrow Listings'`, ex);
       if (ex.response.status === 403 && ex.response.data.message === 'No Escrow Listings') {
@@ -266,8 +267,7 @@ export class WalletService {
       }
     }
 
-
-    const results: any = await firstValueFrom(getEscrowListing$);
+    const results: any = getEscrowListing$;
     const response     = {more: results.more, rows: [], totalRecords: 0};
 
     if (filter !== null) {
